@@ -1,0 +1,221 @@
+#control-panel {
+    position: fixed;
+    right: 0px;
+    bottom: 0px;
+    width: 175px; /* Reduce width to 175px */
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 15px; /* Reduce padding */
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    color: white;
+    
+  }
+
+  /* This class is added when the control panel is visible */
+#control-panel.show {
+    display: block;
+    opacity: 1;
+}
+  
+  .option-row {
+    display: flex;
+    justify-content: left;
+    margin-bottom: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    font-size: 10px; /* Apply the smaller font size */
+    padding-left: 0;
+    margin-left: 0;
+  }
+  
+  .option-row > div {
+    cursor: pointer;
+    margin-left: 0; /* Reduce space between elements */
+    margin-right: 5px;
+    text-underline-offset: 5px; /* Add padding between the underline and the words */
+  }
+  
+  .option-row div:hover {
+    text-decoration: underline; /* Hover underline for folder/audio and sphere/cube */
+    text-underline-offset: 5px; /* Add padding between the underline and the words on hover */
+  }
+  
+  .option-row div.selected {
+    text-decoration: underline;
+    text-underline-offset: 5px; /* Add padding between the underline and the words when selected */
+  }
+  
+  /* Adding space between underline and word */
+  .option-row div {
+    margin-bottom: 5px; /* Add margin to create space */
+  }
+  
+  .action-link {
+    display: block;
+    margin-bottom: 10px;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    font-size: 10px;
+    text-underline-offset: 5px; /* Add padding between the underline and the words */
+  }
+  
+  /* Hover effect for ADD / CONNECT / DISCONNECT */
+  .action-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 5px; /* Add padding between the underline and the words on hover */
+  }
+  
+  /* Ensure width of control panel */
+  #control-panel {
+    width: 175px;
+    max-width: 175px;
+    padding: 10px;
+  }
+  /* Colour grid settings */
+#colour-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Ensure the colours are in a 3x3 grid */
+    gap: 0; /* No gaps between colours */
+  }
+  /* Colour grid settings */
+#colour-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Ensure the colours are in a 3x3 grid */
+    gap: 0; /* No gaps between colours */
+  }
+  
+  .colour-option {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+  }
+  
+  /* Replace the bottom-left colour (assuming it's the dark green) */
+  .colour-option[data-colour="#FFFDE7"] {
+    background-color: #FFFDE7; /* Set to cream */
+  }
+  
+  /* Dot in selected colour */
+  .colour-option.selected::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: black; /* Dot in black */
+    border-radius: 50%;
+  }
+  #revision-mode-btn {
+    position: fixed;
+    right: 0%; /* Adjust this value to align it with the edge you want */
+    top: 50%; /* Keeps it vertically centered */
+    transform: translateY(0%);
+    background: none;
+    border: none;
+    font-size: 36px; /* Adjust to make it thinner */
+    font-weight: 100; /* Make it thinner */
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  #revision-mode-btn.active {
+    transform: rotate(45deg); /* Rotate the plus sign when active */
+  }
+  #title-input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid white;
+    color: white;
+    padding: 5px 0;
+    width: 100%;
+    outline: none !important; /* Force removal of the outline */
+    box-shadow: none !important; /* Ensure no shadow is applied */
+    border-radius: 0 !important;
+  }
+  
+  #title-input:focus {
+    outline: 0 !important; /* No outline */
+    border: none !important; /* No border changes on focus */
+    box-shadow: none !important; /* No box shadow */
+    background: transparent !important; /* No background */
+    border-bottom: 1px solid white !important; /* Keep only this bottom border */
+    color: white !important; /* Enforce white text */
+  }
+  
+  #title-input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    box-shadow: 0 0 0px 1000px transparent inset !important;
+  }
+  
+  #title-input::selection {
+    background: transparent !important; /* Removes highlight when text is selected */
+  }
+ 
+ 
+  /* Arrow styling */
+#add-audio-btn {
+    font-size: 14px;  /* Adjust to match label font size */
+    line-height: 1;   /* Remove additional spacing */
+    transform: rotate(0deg);  /* Adjust the angle to point down */
+    margin-left: 5px;  /* Spacing between the input and the arrow */
+    color: white;  /* Arrow color to match your theme */
+    cursor: pointer;
+
+  }
+
+ /* Make the audio player background fully transparent */
+audio {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  
+  /* WebKit-specific controls panel customization (Safari, Chrome) */
+  audio::-webkit-media-controls-panel {
+    background-color: transparent !important;  /* Ensure panel is transparent */
+    border-radius: 0 !important;  /* Remove rounded corners */
+    box-shadow: none !important;  /* Remove any shadows */
+  }
+  
+  /* Thinner progress bar in WebKit browsers */
+  audio::-webkit-media-controls-timeline {
+    height: 4px !important;  /* Reduce the height of the progress bar */
+  }
+  
+  /* Customize the seek bar's thumb (tracker) */
+  audio::-webkit-slider-thumb {
+    height: 10px !important;  /* Adjust the height of the tracker */
+    width: 2px !important;  /* Make the tracker thinner */
+    background-color: white !important; /* Ensure it's visible */
+  }
+  
+  /* Thinner font size for current time and remaining time in WebKit */
+  audio::-webkit-media-controls-current-time-display,
+  audio::-webkit-media-controls-time-remaining-display {
+    font-size: 10px !important;  /* Adjust the font size */
+  }
+  
+  /* Optionally, hide forward/back buttons */
+  audio::-webkit-media-controls-seek-back-button,
+  audio::-webkit-media-controls-seek-forward-button {
+    display: none !important;
+  }
+ 
+  #search {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300; /* Inter 300 */
+    font-size: 14px;  /* You can adjust the size */
+    color: black;     /* Or any colour you prefer */
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }

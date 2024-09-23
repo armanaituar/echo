@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Force Graph with Search and Audio</title>
+  
+  <!-- Link to FontAwesome for magnifying glass icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; }
+    canvas { display: block; }
+    audio {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+    }
+  
+    #control-panel {
+      position: fixed;
+      right: 0px;
+      bottom: 0px;
+      width: 175px;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      color: white;
+    }
+  
+    /* This class is added when the control panel is visible */
+    #control-panel.show {
+      display: block;
+      opacity: 1;
+    }
+  
+    .option-row {
+      display: flex;
+      justify-content: left;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      font-size: 10px;
+      padding-left: 0;
+      margin-left: 0;
+    }
+  
+    .option-row > div {
+      cursor: pointer;
+      margin-left: 0;
+      margin-right: 5px;
+      text-underline-offset: 5px;
+    }
+  
+    .option-row div:hover {
+      text-decoration: underline;
+      text-underline-offset: 5px;
+    }
+  
+    .option-row div.selected {
+      text-decoration: underline;
+      text-underline-offset: 5px;
+    }
+  
+    .action-link {
+      display: block;
+      margin-bottom: 10px;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      font-size: 10px;
+      text-underline-offset: 5px;
+    }
+  
+    .action-link:hover {
+      text-decoration: underline;
+      text-underline-offset: 5px;
+    }
+  
+    #colour-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+  
+    .colour-option {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      position: relative; /* To ensure the black circle is positioned relative to this box */
+    }
+  
+    .colour-option[data-colour="#FFFDE7"] {
+      background-color: #FFFDE7; /* Set to cream */
+    }
+  
+    .colour-option.selected::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background-color: black;
+      border-radius: 50%;
+    }
+  
+    #title-input {
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid white;
+      color: white;
+      padding: 5px 0;
+      width: 100%;
+    }
+  
+    #size-slider-container {
+      display: flex;
+      align-items: center;
+      margin-top: 20px; /* Adjust as needed for spacing */
+      margin-bottom: 20px;
+    }
+  
+    #size-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 1px;
+      background: repeating-linear-gradient(
+        to right,
+        white 0,
+        white 1px,
+        transparent 3px
+      );
+      outline: none;
+    }
+  
+    #size-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      background: white;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  
+    #revision-mode-btn {
+      position: fixed;
+      right: 0%;
+      top: 50%;
+      transform: translateY(0%);
+      background: none;
+      border: none;
+      font-size: 36px;
+      font-weight: 100;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+  
+    #revision-mode-btn.active {
+      transform: rotate(45deg);
+    }
+  </style>
+</head>
+<body>
+  <div id="3d-graph"></div>
+
+  <!-- Audio Player -->
+  <audio id="audio-player" controls></audio>
+
+    <!-- Search Input Field with Styling -->
+    <div id="search-container" style="position: fixed; top: 10px; right: 10px; display: flex; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.7); width: 140px; justify-content: space-between;">
+      <input type="text" id="search" placeholder="" aria-label="search" 
+      style="padding-top: 5px; font-size: 16px; width: 100px; border: none; background-color: transparent; color: white; outline: none; font-family: 'Inter', sans-serif; font-weight: 300;">      <i class="fas fa-search" style="color: rgba(255, 255, 255, 0.7); font-size: 14px;"></i>
+    </div>
+
+  <!-- Plus/X Button -->
+  <button id="revision-mode-btn">+</button>
+
+  <!-- Control Panel -->
+  <div id="control-panel">
+    <!-- Label Input and Arrow on the right side -->
+<div style="display: flex; align-items: center;">
+  <input type="text" id="title-input" placeholder="re/name" style="flex-grow: 1;">
+  <!-- Arrow to the right of the input -->
+  <div id="add-audio-btn" style="cursor: pointer; margin-left: 8px;">&#x25BC;</div> <!-- Arrow without stem -->
+</div>
+
+
+    <!-- FOLDER / AUDIO Selection -->
+    <div class="option-row">
+      <div id="folder-option">FOLDER</div>
+      <div>/</div>
+      <div id="audio-option">AUDIO</div>
+    </div>
+
+    <!-- Colour Selection Grid -->
+    <div id="colour-grid">
+      <div class="colour-option" data-colour="#FB5000" style="background-color: #FB5000;"></div>
+      <div class="colour-option" data-colour="#A65200" style="background-color: #A65200;"></div>
+      <div class="colour-option" data-colour="#5A00E0" style="background-color: #5A00E0;"></div>
+      <div class="colour-option" data-colour="#047DFF" style="background-color: #047DFF;"></div>
+      <div class="colour-option" data-colour="#FF3060" style="background-color: #FF3060;"></div>
+      <div class="colour-option" data-colour="#037C2D" style="background-color: #037C2D;"></div>
+      <div class="colour-option" data-colour="#FFFDE7" style="background-color: #FFFDE7;"></div>
+      <div class="colour-option" data-colour="#FF93B0" style="background-color: #FF93B0;"></div>
+      <div class="colour-option" data-colour="#F5EC6D" style="background-color: #F5EC6D;"></div>
+    </div>
+
+    <!-- Size Slider -->
+    <div id="size-slider-container">
+      <input type="range" min="10" max="30" value="15" id="size-slider">
+    </div>
+
+    <!-- Shape Selection -->
+    <div class="option-row">
+      <div id="sphere-option">SPHERE</div>
+      <div>/</div>
+      <div id="cube-option">CUBE</div>
+    </div>
+
+    <!-- Add/Connect/Disconnect Links -->
+    <div class="option-row">
+      <div id="add-node-btn" class="action-link">ADD</div>
+      <div id="connect-btn" class="action-link">CONNECT</div>
+      <div id="remove-connection-btn" class="action-link">DISCONNECT</div>
+    </div>
+
+    <!-- Hidden File Input -->
+<input type="file" id="audio-upload" accept="audio/*" style="display: none;">
+  </div>
+
+  <!-- Load JavaScript libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://unpkg.com/3d-force-graph"></script>
+
+  <!-- Link to app.js -->
+  <script src="app.js"></script>
+</body>
+</html>
+
